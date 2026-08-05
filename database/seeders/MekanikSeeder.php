@@ -4,12 +4,19 @@ namespace Database\Seeders;
 
 use App\Models\Mekanik;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class MekanikSeeder extends Seeder
 {
+    /**
+     * Seeder ini butuh RolePermissionSeeder sudah dijalankan lebih dulu
+     * (supaya role "mekanik" sudah ada). Urutan di DatabaseSeeder.php:
+     *   $this->call([
+     *       RolePermissionSeeder::class,
+     *       MekanikSeeder::class,
+     *   ]);
+     */
     public function run(): void
     {
         $namaMekanik = [

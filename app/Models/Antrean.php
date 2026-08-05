@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Antrean extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'tanggal',
@@ -61,6 +61,9 @@ class Antrean extends Model
         return $query->where('status', $status);
     }
 
+    /**
+     * Label status yang ramah ditampilkan di badge.
+     */
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
@@ -71,6 +74,9 @@ class Antrean extends Model
         };
     }
 
+    /**
+     * Durasi pengerjaan (untuk laporan nanti).
+     */
     public function getDurasiMenitAttribute(): ?int
     {
         if (! $this->jam_masuk || ! $this->jam_selesai) {

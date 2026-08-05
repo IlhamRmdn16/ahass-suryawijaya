@@ -2096,16 +2096,16 @@
         },
         {
             "name": "livewire/volt",
-            "version": "v1.11.1",
+            "version": "v1.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/volt.git",
-                "reference": "c921edbc4ff2c90e2ca1e87a9e7358e253e33b29"
+                "reference": "1e46197d615bcd395ae87784fd8d25077782043d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/volt/zipball/c921edbc4ff2c90e2ca1e87a9e7358e253e33b29",
-                "reference": "c921edbc4ff2c90e2ca1e87a9e7358e253e33b29",
+                "url": "https://api.github.com/repos/livewire/volt/zipball/1e46197d615bcd395ae87784fd8d25077782043d",
+                "reference": "1e46197d615bcd395ae87784fd8d25077782043d",
                 "shasum": ""
             },
             "require": {
@@ -2163,7 +2163,7 @@
                 "issues": "https://github.com/livewire/volt/issues",
                 "source": "https://github.com/livewire/volt"
             },
-            "time": "2026-07-22T03:45:31+00:00"
+            "time": "2026-07-31T16:13:54+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+// Note: Illuminate\Foundation\Auth\User as Authenticatable adalah baseclass bawaan Laravel
+use App\Models\Mekanik;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,6 +49,10 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Kalau role user ini "mekanik", ini relasi ke data mekaniknya.
+     * Untuk role lain (super admin, entry, viewer), akan null.
+     */
     public function mekanik()
     {
         return $this->belongsTo(Mekanik::class);

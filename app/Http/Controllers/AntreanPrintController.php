@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Antrean;
-use Illuminate\Http\Request;
 
 class AntreanPrintController extends Controller
 {
