@@ -68,7 +68,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Pekerjaan</p>
-                            <p class="text-base text-slate-200">{{ $tugas->jenisPekerjaan->nama_pekerjaan }}</p>
+                            <p class="text-base text-slate-200">{{ $tugas->jenisPekerjaan->nama_pekerjaan ?? 'Belum ditentukan' }}</p>
                         </div>
                         <div class="pt-2 border-t border-blue-500/20">
                             <p class="text-xs text-slate-400">Mulai jam {{ $tugas->jam_masuk->format('H:i') }}</p>

@@ -22,7 +22,7 @@
                         <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Dikerjakan</span>
                     </div>
                     <p class="text-slate-600">{{ $tugas->tipe_motor }}</p>
-                    <p class="text-slate-600">{{ $tugas->jenisPekerjaan->nama_pekerjaan }}</p>
+                    <p class="text-slate-600">{{ $tugas->jenisPekerjaan->nama_pekerjaan ?? 'JP belum ditentukan admin' }}</p>
                     <p class="text-xs text-slate-400 mt-1">Mulai jam {{ $tugas->jam_masuk->format('H:i') }}</p>
                 </div>
 
@@ -42,14 +42,14 @@
     {{-- Riwayat selesai hari ini --}}
     @if ($riwayatHariIni->isNotEmpty())
         <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mt-8 mb-3">Selesai Hari Ini</h2>
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div class="bg-white border border-slate-200 rounded-xl overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-100 text-sm">
                 <tbody class="divide-y divide-slate-100">
                     @foreach ($riwayatHariIni as $riwayat)
                         <tr>
                             <td class="px-4 py-3 font-medium text-slate-700">{{ $riwayat->no_polisi }}</td>
                             <td class="px-4 py-3 text-slate-600">{{ $riwayat->tipe_motor }}</td>
-                            <td class="px-4 py-3 text-slate-600">{{ $riwayat->jenisPekerjaan->nama_pekerjaan }}</td>
+                            <td class="px-4 py-3 text-slate-600">{{ $riwayat->jenisPekerjaan->nama_pekerjaan ?? '-' }}</td>
                             <td class="px-4 py-3 text-slate-500 whitespace-nowrap">
                                 {{ $riwayat->jam_masuk->format('H:i') }} &ndash; {{ $riwayat->jam_selesai->format('H:i') }}
                             </td>

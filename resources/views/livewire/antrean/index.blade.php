@@ -82,7 +82,25 @@
                             @endif
                         </td>
 
-                        <td class="px-3 py-3 text-slate-700">{{ $antrean->jenisPekerjaan->nama_pekerjaan }}</td>
+                        {{-- Kolom JP: dropdown assign oleh admin, entry cuma lihat teks --}}
+                        <td class="px-3 py-3">
+                            @if ($bisaAssign)
+                                <select
+                                    wire:change="assignJenisPekerjaan({{ $antrean->id }}, $event.target.value)"
+                                    class="rounded-lg border-slate-300 text-xs py-1.5 focus:ring-slate-800 focus:border-slate-800"
+                                    @if ($antrean->status === 'selesai') disabled @endif>
+                                    <option value="">- Belum ditentukan -</option>
+                                    @foreach ($jenisPekerjaanAktif as $jp)
+                                        <option value="{{ $jp->id }}" @selected($antrean->jenis_pekerjaan_id === $jp->id)>
+                                            {{ $jp->nama_pekerjaan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <span class="text-slate-700">{{ $antrean->jenisPekerjaan->nama_pekerjaan ?? '-' }}</span>
+                            @endif
+                        </td>
+
                         <td class="px-3 py-3 text-slate-700">{{ $antrean->no_hp ?: '-' }}</td>
                         <td class="px-3 py-3 text-center">
                             @if ($antrean->daya_auto)
@@ -102,6 +120,11 @@
                             </span>
                         </td>
                         <td class="px-3 py-3 space-x-2 whitespace-nowrap">
+                            @if ($bisaSelesaikanManual && $antrean->status === 'dikerjakan')
+                                <button wire:click="selesaikanManual({{ $antrean->id }})"
+                                    wire:confirm="Tandai antrean {{ $antrean->no_polisi }} sebagai selesai? Biasanya ini dilakukan mekanik sendiri, cuma pakai ini kalau mekanik lupa klik selesai."
+                                    class="text-emerald-600 hover:text-emerald-800 font-medium">Selesai</button>
+                            @endif
                             @if ($bisaEdit && $antrean->status !== 'dikerjakan')
                                 <button wire:click="edit({{ $antrean->id }})" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
                             @endif
@@ -126,7 +149,8 @@
         </table>
     </div>
 
-    {{-- Modal Tambah / Edit --}}
+    {{-- Modal Tambah / Edit -- SENGAJA TIDAK ADA field JP di sini, --}}
+    {{-- JP diisi admin lewat dropdown di kolom tabel, bukan saat entry --}}
     @if ($showModal)
         <div class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 px-4"
              wire:click.self="closeModal">
@@ -150,25 +174,12 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Jam Masuk</label>
-                        <input type="time" wire:model="jam_masuk_waktu"
-                            class="w-full rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
-                        @error('jam_masuk_waktu') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        <p class="text-xs text-slate-400 mt-1">Jam selesai terisi otomatis saat mekanik klik "Selesai".</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Pekerjaan</label>
-                        <select wire:model="jenis_pekerjaan_id"
-                            class="w-full rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
-                            <option value="">- Pilih -</option>
-                            @foreach ($jenisPekerjaanAktif as $jp)
-                                <option value="{{ $jp->id }}">{{ $jp->nama_pekerjaan }}</option>
-                            @endforeach
-                        </select>
-                        @error('jenis_pekerjaan_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Jam Masuk</label>
+                    <input type="time" wire:model="jam_masuk_waktu"
+                        class="w-full rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
+                    @error('jam_masuk_waktu') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    <p class="text-xs text-slate-400 mt-1">Jam selesai terisi otomatis saat mekanik/admin klik "Selesai".</p>
                 </div>
 
                 <div class="mb-4">
@@ -183,6 +194,10 @@
                         class="rounded border-slate-300 text-slate-800 focus:ring-slate-800">
                     <label for="daya_auto" class="text-sm text-slate-700">Daya Auto</label>
                 </div>
+
+                <p class="text-xs text-slate-400 mb-4 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+                    Jenis Pekerjaan dan Mekanik akan ditentukan oleh admin lewat tabel setelah konsumen ini terdaftar.
+                </p>
 
                 <div class="flex justify-end gap-2">
                     <button wire:click="closeModal" class="px-4 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-100">

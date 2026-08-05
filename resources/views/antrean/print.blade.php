@@ -66,7 +66,7 @@
         </tr>
         <tr>
             <td class="label">Jenis Pekerjaan</td><td class="sep">:</td>
-            <td>{{ $antrean->jenisPekerjaan->nama_pekerjaan }}</td>
+            <td>{{ $antrean->jenisPekerjaan->nama_pekerjaan ?? 'Belum ditentukan' }}</td>
         </tr>
         <tr>
             <td class="label">Mekanik</td><td class="sep">:</td>

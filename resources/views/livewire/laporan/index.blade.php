@@ -110,7 +110,7 @@
                             <td class="px-4 py-2.5 font-medium text-slate-800">{{ $antrean->no_polisi }}</td>
                             <td class="px-4 py-2.5 text-slate-600">{{ $antrean->tipe_motor }}</td>
                             <td class="px-4 py-2.5 text-slate-600">{{ $antrean->mekanik->nama ?? '-' }}</td>
-                            <td class="px-4 py-2.5 text-slate-600">{{ $antrean->jenisPekerjaan->nama_pekerjaan }}</td>
+                            <td class="px-4 py-2.5 text-slate-600">{{ $antrean->jenisPekerjaan->nama_pekerjaan ?? '-' }}</td>
                             <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap">
                                 {{ $antrean->jam_masuk->format('H:i') }} &ndash; {{ $antrean->jam_selesai?->format('H:i') ?? '-' }}
                             </td>

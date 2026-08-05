@@ -15,12 +15,13 @@ class Index extends Component
     // Filter tanggal di bagian atas halaman, default hari ini
     public string $tanggal;
 
-    // Form tambah/edit antrean
+    // Form tambah/edit antrean -- JP SENGAJA TIDAK ADA di sini lagi,
+    // karena sekarang JP diisi admin lewat dropdown di tabel, bukan
+    // saat entry mendaftarkan konsumen.
     public ?int $editId = null;
     public string $no_polisi = '';
     public string $tipe_motor = '';
     public string $jam_masuk_waktu = ''; // hanya jam (HH:mm), digabung dengan $tanggal saat simpan
-    public ?int $jenis_pekerjaan_id = null;
     public string $no_hp = '';
     public bool $daya_auto = true;
 
@@ -38,7 +39,6 @@ class Index extends Component
             'no_polisi' => 'required|string|max:20',
             'tipe_motor' => 'required|string|max:100',
             'jam_masuk_waktu' => 'required',
-            'jenis_pekerjaan_id' => 'required|exists:jenis_pekerjaans,id',
             'no_hp' => 'nullable|string|max:20',
             'daya_auto' => 'boolean',
         ];
@@ -55,11 +55,12 @@ class Index extends Component
             'antreans' => $antreans,
             'mekanikAktif' => Mekanik::aktif()->orderBy('nama')->get(),
             'jenisPekerjaanAktif' => JenisPekerjaan::aktif()->orderBy('nama_pekerjaan')->get(),
-            // dua permission ini menentukan tombol/dropdown mana yang muncul di view
+            // permission ini menentukan tombol/dropdown mana yang muncul di view
             'bisaAssign' => auth()->user()->can('assign antrean'),
             'bisaEdit' => auth()->user()->can('edit antrean'),
             'bisaHapus' => auth()->user()->can('delete antrean'),
             'bisaPrint' => auth()->user()->can('print antrean'),
+            'bisaSelesaikanManual' => auth()->user()->can('selesaikan antrean'),
         ]);
     }
 
@@ -77,7 +78,6 @@ class Index extends Component
         $this->no_polisi = $antrean->no_polisi;
         $this->tipe_motor = $antrean->tipe_motor;
         $this->jam_masuk_waktu = $antrean->jam_masuk->format('H:i');
-        $this->jenis_pekerjaan_id = $antrean->jenis_pekerjaan_id;
         $this->no_hp = $antrean->no_hp ?? '';
         $this->daya_auto = $antrean->daya_auto;
         $this->showModal = true;
@@ -94,7 +94,6 @@ class Index extends Component
                 'no_polisi' => $this->no_polisi,
                 'tipe_motor' => $this->tipe_motor,
                 'jam_masuk' => $jamMasuk,
-                'jenis_pekerjaan_id' => $this->jenis_pekerjaan_id,
                 'no_hp' => $this->no_hp,
                 'daya_auto' => $this->daya_auto,
             ]);
@@ -105,11 +104,11 @@ class Index extends Component
                 'no_polisi' => strtoupper($this->no_polisi),
                 'tipe_motor' => $this->tipe_motor,
                 'jam_masuk' => $jamMasuk,
-                'jenis_pekerjaan_id' => $this->jenis_pekerjaan_id,
                 'no_hp' => $this->no_hp,
                 'daya_auto' => $this->daya_auto,
                 'status' => 'menunggu',
                 'created_by' => auth()->id(),
+                // jenis_pekerjaan_id sengaja dikosongkan -- diisi admin belakangan
             ]);
             session()->flash('message', 'Konsumen baru berhasil didaftarkan ke antrean.');
         }
@@ -150,6 +149,52 @@ class Index extends Component
         session()->flash('message', 'Antrean berhasil didorong ke mekanik.');
     }
 
+    /**
+     * Admin memilihkan Jenis Pekerjaan untuk satu antrean.
+     * Sengaja terpisah dari form entry -- entry TIDAK punya akses
+     * mengubah ini, cuma admin (permission 'assign antrean').
+     */
+    public function assignJenisPekerjaan(int $antreanId, $jenisPekerjaanId): void
+    {
+        if (! auth()->user()->can('assign antrean')) {
+            abort(403);
+        }
+
+        $antrean = Antrean::findOrFail($antreanId);
+
+        $antrean->update([
+            'jenis_pekerjaan_id' => $jenisPekerjaanId === '' ? null : $jenisPekerjaanId,
+        ]);
+
+        session()->flash('message', 'Jenis pekerjaan berhasil diperbarui.');
+    }
+
+    /**
+     * Admin menyelesaikan pekerjaan ATAS NAMA mekanik -- buat jaga-jaga
+     * kalau mekanik lupa klik "Selesai" sendiri dari dashboardnya.
+     * Efeknya sama persis: jam_selesai terisi now(), status jadi selesai.
+     */
+    public function selesaikanManual(int $antreanId): void
+    {
+        if (! auth()->user()->can('selesaikan antrean')) {
+            abort(403);
+        }
+
+        $antrean = Antrean::findOrFail($antreanId);
+
+        if ($antrean->status !== 'dikerjakan') {
+            session()->flash('error', 'Antrean ini belum dalam status dikerjakan.');
+            return;
+        }
+
+        $antrean->update([
+            'jam_selesai' => now(),
+            'status' => 'selesai',
+        ]);
+
+        session()->flash('message', 'Antrean ' . $antrean->no_polisi . ' ditandai selesai oleh admin.');
+    }
+
     public function delete(int $id): void
     {
         $antrean = Antrean::findOrFail($id);
@@ -171,7 +216,7 @@ class Index extends Component
 
     private function resetForm(): void
     {
-        $this->reset(['editId', 'no_polisi', 'tipe_motor', 'jenis_pekerjaan_id', 'no_hp']);
+        $this->reset(['editId', 'no_polisi', 'tipe_motor', 'no_hp']);
         $this->jam_masuk_waktu = now()->format('H:i');
         $this->daya_auto = true;
         $this->resetErrorBag();

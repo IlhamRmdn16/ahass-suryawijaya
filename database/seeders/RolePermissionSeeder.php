@@ -32,6 +32,9 @@ class RolePermissionSeeder extends Seeder
             'view own antrean',     // mekanik lihat tugas sendiri
             'update status selesai',// mekanik klik "Selesai"
 
+            // Admin bisa menyelesaikan antrean atas nama mekanik (jaga-jaga lupa)
+            'selesaikan antrean',
+
             // User & role management
             'manage users',
 
