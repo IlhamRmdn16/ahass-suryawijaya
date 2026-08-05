@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return redirect()->route('antrean.index');
+    return redirect()->route('dashboard');
 });
 
 /*
@@ -51,6 +51,13 @@ Route::post('/logout', function (\Illuminate\Http\Request $request) {
 | Supaya user yang baru login tidak nyasar ke halaman dashboard kosong.
 */
 Route::get('/dashboard', function () {
+    $user = auth()->user();
+
+    // Mekanik tidak punya akses ke /antrean, jadi arahkan ke dashboard-nya sendiri
+    if ($user->hasRole('mekanik')) {
+        return redirect()->route('mekanik.dashboard');
+    }
+
     return redirect()->route('antrean.index');
 })->middleware(['auth'])->name('dashboard');
 
