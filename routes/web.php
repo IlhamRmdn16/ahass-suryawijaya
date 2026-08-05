@@ -7,6 +7,7 @@ use App\Livewire\Laporan\Index as LaporanIndex;
 use App\Livewire\Mekanik\Dashboard as MekanikDashboard;
 use App\Livewire\Mekanik\Index as MekanikIndex;
 use App\Livewire\Monitor\Board as MonitorBoard;
+use App\Livewire\Profile\Edit as ProfileEdit;
 use App\Livewire\Users\Index as UsersIndex;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,21 @@ require __DIR__ . '/auth.php';
 
 /*
 |--------------------------------------------------------------------------
+| Logout -- mandiri, tidak bergantung ke controller Breeze manapun.
+| Kalau routes/auth.php kamu sudah punya route 'logout' sendiri, ini akan
+| konflik nama -- hapus salah satu.
+|--------------------------------------------------------------------------
+*/
+Route::post('/logout', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+})->middleware('auth')->name('logout');
+
+/*
+|--------------------------------------------------------------------------
 | Redirect /dashboard bawaan Breeze -> /antrean
 |--------------------------------------------------------------------------
 | Supaya user yang baru login tidak nyasar ke halaman dashboard kosong.
@@ -37,6 +53,15 @@ require __DIR__ . '/auth.php';
 Route::get('/dashboard', function () {
     return redirect()->route('antrean.index');
 })->middleware(['auth'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Profile -- custom Livewire component, tidak bergantung ke ProfileController
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', ProfileEdit::class)->name('profile.edit');
+});
 
 /*
 |--------------------------------------------------------------------------
