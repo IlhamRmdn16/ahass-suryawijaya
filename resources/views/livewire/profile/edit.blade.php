@@ -10,6 +10,48 @@
         </div>
     @endif
 
+    {{-- Foto Profil --}}
+    <div class="bg-white border border-slate-200 rounded-xl p-6 mb-6">
+        <h2 class="text-sm font-semibold text-slate-700 mb-4">Foto Profil</h2>
+
+        <div class="flex items-center gap-5">
+            {{-- Preview: foto baru yang dipilih (belum disimpan) > foto tersimpan > inisial --}}
+            <div class="w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center shrink-0">
+                @if ($fotoBaru)
+                    <img src="{{ $fotoBaru->temporaryUrl() }}" class="w-full h-full object-cover" alt="Preview foto">
+                @elseif (auth()->user()->foto_url)
+                    <img src="{{ auth()->user()->foto_url }}" class="w-full h-full object-cover" alt="Foto profil">
+                @else
+                    <span class="text-2xl font-bold text-slate-500">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                @endif
+            </div>
+
+            <div class="flex-1">
+                <input type="file" wire:model="fotoBaru" accept="image/*"
+                    class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-700 file:text-sm hover:file:bg-slate-200">
+                @error('fotoBaru') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+
+                <div wire:loading wire:target="fotoBaru" class="text-xs text-slate-400 mt-1">Mengunggah...</div>
+
+                <div class="flex gap-2 mt-3">
+                    @if ($fotoBaru)
+                        <button wire:click="uploadFoto"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 text-white hover:bg-slate-800">
+                            Simpan Foto
+                        </button>
+                    @endif
+                    @if (auth()->user()->foto)
+                        <button wire:click="hapusFoto" wire:confirm="Hapus foto profil?"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50">
+                            Hapus Foto
+                        </button>
+                    @endif
+                </div>
+                <p class="text-xs text-slate-400 mt-2">Format JPG/PNG, maksimal 2MB.</p>
+            </div>
+        </div>
+    </div>
+
     {{-- Form Data Diri --}}
     <div class="bg-white border border-slate-200 rounded-xl p-6 mb-6">
         <h2 class="text-sm font-semibold text-slate-700 mb-4">Informasi Akun</h2>

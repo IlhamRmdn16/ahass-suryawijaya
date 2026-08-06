@@ -36,13 +36,19 @@
             ])>
                 {{-- Nama mekanik --}}
                 <div class="flex items-center gap-3 mb-5">
-                    <div @class([
-                        'w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0',
-                        'bg-slate-800 text-slate-400' => ! $tugas,
-                        'bg-blue-600 text-white' => $tugas,
-                    ])>
-                        {{ strtoupper(substr($mekanik->nama, 0, 1)) }}
-                    </div>
+                    @if ($mekanik->user?->foto_url)
+                        <img src="{{ $mekanik->user->foto_url }}"
+                             class="w-12 h-12 rounded-full object-cover shrink-0 border-2 {{ $tugas ? 'border-blue-500' : 'border-slate-700' }}"
+                             alt="{{ $mekanik->nama }}">
+                    @else
+                        <div @class([
+                            'w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0',
+                            'bg-slate-800 text-slate-400' => ! $tugas,
+                            'bg-blue-600 text-white' => $tugas,
+                        ])>
+                            {{ strtoupper(substr($mekanik->nama, 0, 1)) }}
+                        </div>
+                    @endif
                     <div class="min-w-0">
                         <p class="font-semibold text-lg truncate">{{ $mekanik->nama }}</p>
                         <p @class([

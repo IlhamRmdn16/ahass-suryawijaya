@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'mekanik_id',
+        'foto',
     ];
 
     /**
@@ -56,5 +57,14 @@ class User extends Authenticatable
     public function mekanik()
     {
         return $this->belongsTo(Mekanik::class);
+    }
+
+    /**
+     * URL publik foto profil, atau null kalau belum upload
+     * (dipakai buat tampilkan avatar/inisial sebagai fallback).
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        return $this->foto ? asset('storage/' . $this->foto) : null;
     }
 }

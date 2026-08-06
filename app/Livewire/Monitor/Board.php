@@ -12,7 +12,7 @@ class Board extends Component
     public function render()
     {
         $mekaniks = Mekanik::aktif()
-            ->with(['antreanAktif.jenisPekerjaan'])
+            ->with(['antreanAktif.jenisPekerjaan', 'user'])
             ->orderBy('nama')
             ->get();
 

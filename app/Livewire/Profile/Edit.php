@@ -3,15 +3,22 @@
 namespace App\Livewire\Profile;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.app')]
 class Edit extends Component
 {
+    use WithFileUploads;
+
     public string $name = '';
     public string $email = '';
+
+    // Foto baru yang mau diupload (belum tersimpan permanen sampai klik "Ganti Foto")
+    public $fotoBaru = null;
 
     public string $current_password = '';
     public string $new_password = '';
@@ -36,6 +43,42 @@ class Edit extends Component
         ]);
 
         session()->flash('message', 'Profil berhasil diperbarui.');
+    }
+
+    public function uploadFoto(): void
+    {
+        $this->validate([
+            'fotoBaru' => 'required|image|max:2048', // maksimal 2MB
+        ]);
+
+        $user = auth()->user();
+
+        // Hapus foto lama dulu (kalau ada) supaya storage tidak numpuk file yatim
+        if ($user->foto) {
+            Storage::disk('public')->delete($user->foto);
+        }
+
+        // Disimpan di storage/app/public/foto-profil, bisa diakses lewat
+        // /storage/foto-profil/xxx.jpg setelah `php artisan storage:link`
+        $path = $this->fotoBaru->store('foto-profil', 'public');
+
+        $user->update(['foto' => $path]);
+
+        $this->fotoBaru = null;
+
+        session()->flash('message', 'Foto profil berhasil diperbarui.');
+    }
+
+    public function hapusFoto(): void
+    {
+        $user = auth()->user();
+
+        if ($user->foto) {
+            Storage::disk('public')->delete($user->foto);
+            $user->update(['foto' => null]);
+        }
+
+        session()->flash('message', 'Foto profil dihapus.');
     }
 
     public function updatePassword(): void
