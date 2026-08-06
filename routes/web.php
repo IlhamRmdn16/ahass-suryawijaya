@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AntreanPrintController;
+use App\Http\Controllers\LaporanPrintController;
 use App\Livewire\Antrean\Index as AntreanIndex;
 use App\Livewire\JenisPekerjaan\Index as JenisPekerjaanIndex;
 use App\Livewire\Laporan\Index as LaporanIndex;
@@ -118,4 +119,5 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
 */
 Route::middleware(['auth', 'role:super admin|viewer'])->group(function () {
     Route::get('/laporan', LaporanIndex::class)->name('laporan.index');
+    Route::get('/laporan/print/{tanggal}', [LaporanPrintController::class, 'show'])->name('laporan.print');
 });

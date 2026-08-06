@@ -18,11 +18,16 @@ class Index extends Component
     public string $filterStatus = 'semua';
     public string $filterMekanik = 'semua';
 
+    // Tanggal khusus untuk cetak Unit Entry A4 -- terpisah dari filter
+    // rentang di atas, defaultnya hari ini, bisa diubah bebas.
+    public string $tanggalPrint;
+
     public function mount(): void
     {
         // Default: rentang bulan berjalan
         $this->tanggal_awal = now()->startOfMonth()->format('Y-m-d');
         $this->tanggal_akhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tanggalPrint = now()->format('Y-m-d');
     }
 
     public function updated($property): void
