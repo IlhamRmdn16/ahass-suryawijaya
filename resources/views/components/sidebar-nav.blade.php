@@ -1,6 +1,6 @@
-<div class="h-16 shrink-0 flex items-center gap-2 px-5 border-b border-slate-800">
-    <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold text-sm shrink-0">A</div>
-    <span class="text-white font-semibold text-lg truncate">AHASS</span>
+<div class="h-16 shrink-0 flex items-center gap-2.5 px-4 border-b border-slate-800">
+    <img src="{{ asset('images/ahass.webp') }}" alt="AHASS" class="h-9 w-auto shrink-0 rounded">
+    <span class="text-white font-semibold text-sm leading-tight truncate">AHASS-SURYA WIJAYA</span>
 </div>
 
 <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

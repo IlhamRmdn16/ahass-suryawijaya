@@ -3,9 +3,9 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-8 lg:mb-10">
         <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center font-bold text-lg">A</div>
+            <img src="{{ asset('images/ahass.webp') }}" alt="AHASS" class="h-12 w-auto rounded-lg">
             <div>
-                <h1 class="text-2xl lg:text-3xl font-bold tracking-tight">AHASS &mdash; Status Bengkel</h1>
+                <h1 class="text-2xl lg:text-3xl font-bold tracking-tight">AHASS-SURYA WIJAYA</h1>
                 <p class="text-slate-400 text-sm lg:text-base">Papan monitor pekerjaan mekanik</p>
             </div>
         </div>
