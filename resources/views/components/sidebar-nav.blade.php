@@ -5,11 +5,11 @@
 
 <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
 
-    {{-- @unlessrole dipakai (bukan @can) supaya menu ini memang HANYA
+    {{-- Pakai hasRole() langsung (bukan @can) supaya menu ini memang HANYA
          nyembunyiin dari role mekanik secara spesifik -- kalau pakai
          permission biasa, super admin akan tetap lihat karena dia punya
          semua permission. --}}
-    @unlessrole('mekanik')
+    @if (! auth()->user()->hasRole('mekanik'))
     <a href="{{ route('antrean.index') }}"
        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
        {{ request()->routeIs('antrean.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
@@ -18,14 +18,14 @@
         </svg>
         Antrean
     </a>
-    @endunlessrole
+    @endif
 
-    {{-- @role dipakai, bukan @can('view own antrean') -- soalnya super
-         admin otomatis punya SEMUA permission (termasuk itu), jadi kalau
-         pakai @can menu ini bakal ikut muncul di akun super admin juga.
-         @role mengecek role user secara langsung, jadi cuma tampil kalau
-         rolenya benar-benar "mekanik". --}}
-    @role('mekanik')
+    {{-- Pakai hasRole() langsung, bukan @can('view own antrean') -- soalnya
+         super admin otomatis punya SEMUA permission (termasuk itu), jadi
+         kalau pakai @can menu ini bakal ikut muncul di akun super admin
+         juga. hasRole() mengecek role user secara langsung, jadi cuma
+         tampil kalau rolenya benar-benar "mekanik". --}}
+    @if (auth()->user()->hasRole('mekanik'))
     <a href="{{ route('mekanik.dashboard') }}"
        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
        {{ request()->routeIs('mekanik.dashboard') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
@@ -34,7 +34,7 @@
         </svg>
         Tugas Saya
     </a>
-    @endrole
+    @endif
 
     <a href="{{ route('monitor.board') }}" target="_blank"
        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-slate-800 hover:text-white">
