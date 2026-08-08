@@ -121,16 +121,5 @@
             @endforelse
         </tbody>
     </table>
-
-    <div class="footer">
-        <div>
-            <p>Mengetahui,</p>
-            <p class="line">Kepala Bengkel</p>
-        </div>
-        <div>
-            <p>Dicetak oleh,</p>
-            <p class="line">{{ auth()->user()->name }}</p>
-        </div>
-    </div>
 </body>
 </html>
