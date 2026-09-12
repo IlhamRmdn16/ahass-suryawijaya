@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.5s>
     {{-- Header + Filter Tanggal --}}
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
         <div>
@@ -40,6 +40,7 @@
             <thead class="bg-slate-50">
                 <tr>
                     <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">No</th>
+                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Nama</th>
                     <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">No Polisi</th>
                     <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Tipe Motor</th>
                     <th class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Jam</th>
@@ -55,6 +56,7 @@
                 @forelse ($antreans as $i => $antrean)
                     <tr class="hover:bg-slate-50">
                         <td class="px-3 py-3 text-slate-600">{{ $i + 1 }}</td>
+                        <td class="px-3 py-3 text-slate-700">{{ $antrean->nama_konsumen ?: '-' }}</td>
                         <td class="px-3 py-3 font-medium text-slate-800">{{ $antrean->no_polisi }}</td>
                         <td class="px-3 py-3 text-slate-700">{{ $antrean->tipe_motor }}</td>
                         <td class="px-3 py-3 text-slate-700 whitespace-nowrap">
@@ -63,7 +65,6 @@
                             {{ $antrean->jam_selesai ? $antrean->jam_selesai->format('H:i') : '-' }}
                         </td>
 
-                        {{-- Kolom Mekanik: dropdown assign, hanya aktif kalau punya permission --}}
                         <td class="px-3 py-3">
                             @if ($bisaAssign)
                                 <select
@@ -82,7 +83,6 @@
                             @endif
                         </td>
 
-                        {{-- Kolom JP: dropdown assign oleh admin, entry cuma lihat teks --}}
                         <td class="px-3 py-3">
                             @if ($bisaAssign)
                                 <select
@@ -140,7 +140,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="px-4 py-10 text-center text-slate-400">
+                        <td colspan="11" class="px-4 py-10 text-center text-slate-400">
                             Belum ada konsumen yang terdaftar pada tanggal ini.
                         </td>
                     </tr>
@@ -149,8 +149,7 @@
         </table>
     </div>
 
-    {{-- Modal Tambah / Edit -- SENGAJA TIDAK ADA field JP di sini, --}}
-    {{-- JP diisi admin lewat dropdown di kolom tabel, bukan saat entry --}}
+    {{-- Modal Tambah / Edit --}}
     @if ($showModal)
         <div class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 px-4"
              wire:click.self="closeModal">
@@ -158,6 +157,14 @@
                 <h2 class="text-lg font-semibold text-slate-800 mb-4">
                     {{ $editId ? 'Edit Data Antrean' : 'Daftarkan Konsumen Baru' }}
                 </h2>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Konsumen</label>
+                    <input type="text" wire:model="nama_konsumen" placeholder="Contoh: Budi Santoso"
+                        class="w-full rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
+                    @error('nama_konsumen') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    <p class="text-xs text-slate-400 mt-1">Hanya buat data internal, tidak muncul di struk cetak.</p>
+                </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>

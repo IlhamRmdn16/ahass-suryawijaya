@@ -10,16 +10,10 @@ class JenisPekerjaanSeeder extends Seeder
     public function run(): void
     {
         $daftar = [
-            'Servis Rutin',
-            'Ganti Oli',
-            'Tune Up',
-            'Ganti Ban',
-            'Servis Karburator/Injeksi',
-            'Servis Rem',
-            'Ganti Aki',
-            'Servis CVT (Matic)',
-            'Perbaikan Kelistrikan',
-            'Klaim Sparepart',
+            'Service Bayar (QS)',
+            'Ganti Oli (OR)',
+            'Pasang Sparepart (IS)',
+            'Kupon Perawatan Berkala (KPB)',
         ];
 
         foreach ($daftar as $nama) {

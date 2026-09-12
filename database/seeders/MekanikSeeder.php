@@ -20,11 +20,11 @@ class MekanikSeeder extends Seeder
     public function run(): void
     {
         $namaMekanik = [
-            'Budi Santoso',
-            'Agus Prasetyo',
-            'Dedi Kurniawan',
-            'Eko Wahyudi',
-            'Fajar Ramadhan',
+            'Ian',
+            'Yadi',
+            'Tatang',
+            'Dedi',
+            'Pian',
         ];
 
         foreach ($namaMekanik as $nama) {

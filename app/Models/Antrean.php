@@ -11,6 +11,7 @@ class Antrean extends Model
 
     protected $fillable = [
         'tanggal',
+        'nama_konsumen',
         'no_polisi',
         'tipe_motor',
         'jam_masuk',
@@ -61,9 +62,6 @@ class Antrean extends Model
         return $query->where('status', $status);
     }
 
-    /**
-     * Label status yang ramah ditampilkan di badge.
-     */
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
@@ -74,9 +72,6 @@ class Antrean extends Model
         };
     }
 
-    /**
-     * Durasi pengerjaan (untuk laporan nanti).
-     */
     public function getDurasiMenitAttribute(): ?int
     {
         if (! $this->jam_masuk || ! $this->jam_selesai) {
