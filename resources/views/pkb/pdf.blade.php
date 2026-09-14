@@ -20,14 +20,14 @@
 
         /* JUDUL & GARIS PEMBATAS */
         h1 {
-            font-size: 13pt;
-            text-align: center;
-            margin: 0 0 10px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #000;
-            text-transform: uppercase;
-            line-height: 1.3;
-        }
+    font-size: 13pt;
+    text-align: center;
+    margin: -20px -20px 10px -20px;
+    padding: 20px 20px 8px 20px;
+    border-bottom: 2px solid #000;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
 
         table.info {
     width: 100%;
@@ -53,6 +53,26 @@ table.info td {
             margin-bottom: 10px;
             text-align: justify;
         }
+
+        .item-header {
+    display: flex;
+    align-items: flex-start;
+}
+
+.item-number {
+    white-space: nowrap;
+    margin-right: 5px;
+}
+
+.item-content {
+    flex: 1;
+}
+
+.sub-item {
+    margin-left: 24px;
+    margin-top: 5px;
+    text-align: justify;
+}
 
         /*
          * CHECKBOX
@@ -141,17 +161,23 @@ table.info td {
         Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
         menganalisa, mentransfer dan memusnahkan data pribadi yang diperlukan dari konsumen
         untuk kegiatan:
-
-        a. Proses reminder perawatan berkala kendaraan, perbaikan kendaraan,
+        <div class="sub-item">
+        <strong>a.</strong>
+        Proses reminder perawatan berkala kendaraan, perbaikan kendaraan,
         garansi kendaraan (pabrikan), pemesanan suku cadang, serta berkomunikasi
         dengan konsumen melalui berbagai media komunikasi dan melakukan kajian
         umpan balik untuk memahami preferensi dari konsumen;
+    </div>
 
-        b. Menerapkan sistem, prosedur dan perangkat teknis serta mengambil tindakan lain
+    <div class="sub-item">
+        <strong>b.</strong>
+        Menerapkan sistem, prosedur dan perangkat teknis serta mengambil tindakan lain
         yang diperlukan untuk melindungi data pribadi yang dikumpulkan dan dikelola
         termasuk dengan cara bekerjasama dengan pihak penyedia layanan teknologi dan
         informasi dan/atau pihak lainnya yang ditunjuk oleh AHASS dan/atau Distributor
         dan/atau Manufaktur.
+    </div>
+    
     </div>
 
     <div class="item">
