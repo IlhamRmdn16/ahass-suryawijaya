@@ -10,7 +10,6 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Reset cache permission (wajib, biar Spatie ga pakai cache lama)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
@@ -18,7 +17,7 @@ class RolePermissionSeeder extends Seeder
             'create antrean',
             'edit antrean',
             'delete antrean',
-            'assign antrean',       // dorong antrean ke mekanik
+            'assign antrean',
             'print antrean',
             'view antrean',
 
@@ -29,11 +28,16 @@ class RolePermissionSeeder extends Seeder
             'manage jenis pekerjaan',
 
             // Mekanik operasional
-            'view own antrean',     // mekanik lihat tugas sendiri
-            'update status selesai',// mekanik klik "Selesai"
+            'view own antrean',
+            'update status selesai',
 
             // Admin bisa menyelesaikan antrean atas nama mekanik (jaga-jaga lupa)
             'selesaikan antrean',
+
+            // PKB (Perintah Kerja Bengkel) -- HANYA entry & super admin
+            // yang boleh akses fitur ini sama sekali (bukan viewer/mekanik)
+            'buat pkb',      // entry & admin bisa buka form, isi centang + ttd konsumen
+            'isi no pkb',    // KHUSUS admin, isi No. PKB/WO setelah ditandatangani
 
             // User & role management
             'manage users',
@@ -46,33 +50,34 @@ class RolePermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // ── Role: super admin → semua permission ──
+        // ── Role: super admin -> semua permission ──
         $superAdmin = Role::firstOrCreate(['name' => 'super admin']);
         $superAdmin->syncPermissions(Permission::all());
 
-        // ── Role: entry → input & print antrean ──
+        // ── Role: entry -> input & print antrean + PKB (TANPA isi no pkb) ──
         $entry = Role::firstOrCreate(['name' => 'entry']);
         $entry->syncPermissions([
             'create antrean',
             'edit antrean',
             'print antrean',
             'view antrean',
+            'buat pkb',
         ]);
 
-        // ── Role: mekanik → hanya lihat & selesaikan tugas sendiri ──
+        // ── Role: mekanik -> hanya lihat & selesaikan tugas sendiri ──
         $mekanik = Role::firstOrCreate(['name' => 'mekanik']);
         $mekanik->syncPermissions([
             'view own antrean',
             'update status selesai',
         ]);
 
-        // ── Role: viewer → read only ──
+        // ── Role: viewer -> read only ──
         $viewer = Role::firstOrCreate(['name' => 'viewer']);
         $viewer->syncPermissions([
             'view antrean',
             'view laporan',
         ]);
 
-        $this->command->info('Role & permission berhasil dibuat: super admin, entry, mekanik, viewer');
+        $this->command->info('Role & permission berhasil dibuat/diperbarui: super admin, entry, mekanik, viewer');
     }
 }

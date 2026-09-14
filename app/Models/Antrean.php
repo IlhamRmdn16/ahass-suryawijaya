@@ -42,6 +42,11 @@ class Antrean extends Model
         return $this->belongsTo(JenisPekerjaan::class);
     }
 
+    public function pkb()
+    {
+        return $this->hasOne(Pkb::class);
+    }
+
     public function pembuat()
     {
         return $this->belongsTo(User::class, 'created_by');

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AntreanPrintController;
 use App\Http\Controllers\LaporanPrintController;
+use App\Http\Controllers\PkbPdfController;
 use App\Livewire\Antrean\Index as AntreanIndex;
 use App\Livewire\JenisPekerjaan\Index as JenisPekerjaanIndex;
 use App\Livewire\Laporan\Index as LaporanIndex;
@@ -10,6 +11,8 @@ use App\Livewire\Mekanik\Index as MekanikIndex;
 use App\Livewire\Monitor\Board as MonitorBoard;
 use App\Livewire\Profile\Edit as ProfileEdit;
 use App\Livewire\Users\Index as UsersIndex;
+use App\Livewire\Pkb\Index as PkbIndex;
+use App\Livewire\Pkb\Show as PkbShow;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -120,4 +123,11 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
 Route::middleware(['auth', 'role:super admin|viewer'])->group(function () {
     Route::get('/laporan', LaporanIndex::class)->name('laporan.index');
     Route::get('/laporan/print/{tanggal}', [LaporanPrintController::class, 'show'])->name('laporan.print');
+});
+
+// HANYA super admin & entry yang boleh akses
+Route::middleware(['auth', 'role:super admin|entry'])->group(function () {
+    Route::get('/pkb', PkbIndex::class)->name('pkb.index');
+    Route::get('/antrean/{antrean}/pkb', PkbShow::class)->name('pkb.show');
+    Route::get('/pkb/{pkb}/download', [PkbPdfController::class, 'download'])->name('pkb.download');
 });

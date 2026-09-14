@@ -5,10 +5,6 @@
 
 <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
 
-    {{-- Pakai hasRole() langsung (bukan @can) supaya menu ini memang HANYA
-         nyembunyiin dari role mekanik secara spesifik -- kalau pakai
-         permission biasa, super admin akan tetap lihat karena dia punya
-         semua permission. --}}
     @if (! auth()->user()->hasRole('mekanik'))
     <a href="{{ route('antrean.index') }}"
        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
@@ -20,11 +16,6 @@
     </a>
     @endif
 
-    {{-- Pakai hasRole() langsung, bukan @can('view own antrean') -- soalnya
-         super admin otomatis punya SEMUA permission (termasuk itu), jadi
-         kalau pakai @can menu ini bakal ikut muncul di akun super admin
-         juga. hasRole() mengecek role user secara langsung, jadi cuma
-         tampil kalau rolenya benar-benar "mekanik". --}}
     @if (auth()->user()->hasRole('mekanik'))
     <a href="{{ route('mekanik.dashboard') }}"
        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
@@ -35,6 +26,20 @@
         Tugas Saya
     </a>
     @endif
+
+    {{-- Menu PKB -- terpisah dari Antrean, sesuai permintaan. Cuma
+         muncul buat yang punya permission 'buat pkb' (entry & super
+         admin), otomatis nggak muncul buat viewer/mekanik. --}}
+    @can('buat pkb')
+    <a href="{{ route('pkb.index') }}"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+       {{ request()->routeIs('pkb.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        PKB
+    </a>
+    @endcan
 
     <a href="{{ route('monitor.board') }}" target="_blank"
        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-slate-800 hover:text-white">
