@@ -4,24 +4,32 @@
     <meta charset="UTF-8">
     <style>
         body {
-            font-family: 'DejaVu Sans', sans-serif;
-            font-size: 11px;
-            color: #111;
-            line-height: 1.5;
+            font-family: 'Times-Roman', 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            color: #000;
+            line-height: 1.4;
+            position: relative;
+            
+            /* BORDER SEKELILING DOKUMEN */
+            border: 1px solid #000;
+            padding: 20px;
+            margin: 0;
         }
+        
+        /* JUDUL & GARIS PEMBATAS */
         h1 {
-            font-size: 14px;
+            font-size: 13pt;
             text-align: center;
-            margin: 0 0 4px;
+            margin: 0 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #000; /* Border tambahan sesudah judul */
+            text-transform: uppercase;
+            line-height: 1.3;
         }
-        h2 {
-            font-size: 12px;
-            text-align: center;
-            margin: 0 0 16px;
-            font-weight: normal;
-        }
+        
         table.info {
             width: 100%;
+            margin-top: 10px;
             margin-bottom: 14px;
         }
         table.info td {
@@ -29,26 +37,54 @@
             vertical-align: top;
         }
         table.info td.label { width: 100px; }
-        p { text-align: justify; margin: 0 0 10px; }
-        .item { margin-bottom: 10px; }
-        .item .check {
-            display: inline-block;
-            width: 16px;
-            font-weight: bold;
+        
+        p { 
+            text-align: justify; 
+            margin: 0 0 10px; 
         }
-        .ttd-block {
-            width: 250px;
-            float: right;
+        
+        .item { 
+            margin-bottom: 10px; 
+            text-align: justify;
+        }
+        
+        /* CEKLIS DI DALAM KOTAK */
+        .check-box {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 1px solid #000;
             text-align: center;
+            line-height: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        /* TANDA TANGAN MENTOK KANAN */
+        .ttd-wrapper {
+            position: relative;
+            height: 140px;
             margin-top: 20px;
         }
-        .ttd-img { height: 70px; margin: 8px 0; }
-        .clearfix { clear: both; }
+        .ttd-box {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 220px;
+            text-align: center;
+        }
+        .ttd-img { 
+            height: 65px; 
+            margin: 8px 0;
+        }
     </style>
 </head>
 <body>
-    <h1>FORMULIR PERSETUJUAN PEMROSESAN DATA PRIBADI</h1>
-    <h2>Perintah Kerja Bengkel (PKB)</h2>
+
+    <h1>FORMULIR PERSETUJUAN PEMROSESAN DATA PRIBADI
+        <br>Perintah Kerja Bengkel (PKB)
+    </h1>
 
     <table class="info">
         <tr>
@@ -69,7 +105,7 @@
     </p>
 
     <div class="item">
-        <span class="check">[&#10003;]</span> 1. Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
+        <span class="check-box">&#10003;</span> <strong>1.</strong> Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
         menganalisa, mentransfer dan memusnahkan data pribadi yang diperlukan dari konsumen untuk kegiatan:
         a. Proses reminder perawatan berkala kendaraan, perbaikan kendaraan, garansi kendaraan (pabrikan), pemesanan
         suku cadang, serta berkomunikasi dengan konsumen melalui berbagai media komunikasi dan melakukan kajian
@@ -80,7 +116,7 @@
     </div>
 
     <div class="item">
-        <span class="check">[&#10003;]</span> 2. Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
+        <span class="check-box">&#10003;</span> <strong>2.</strong> Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
         menganalisa, mentransfer dan memusnahkan data pribadi untuk kegiatan promosi dan/atau informasi yang
         berkaitan dengan produk dan jasa kendaraan.
     </div>
@@ -103,21 +139,25 @@
     </p>
 
     <p>
-        Demikian Surat Pernyataan ini saya tandatangani dan beri tanda centang (&#10003;) sesuai dengan kehendak
+        Demikian Surat Pernyataan ini saya tandatangani dan beri tanda centang (<span class="check-box">&#10003;</span>) sesuai dengan kehendak
         saya pribadi tanpa ada paksaan dari pihak manapun.
     </p>
 
-    <p style="text-align: right; margin-top: 10px;">
-        Garut, {{ $pkb->ditandatangani_pada->translatedFormat('d F Y') }}
-    </p>
-
-    <div class="ttd-block">
-        <p>Pemilik Data Pribadi,</p>
-        @if ($pkb->tanda_tangan)
-            <img class="ttd-img" src="{{ storage_path('app/public/' . $pkb->tanda_tangan) }}">
-        @endif
-        <p><strong>({{ $pkb->nama_konsumen }})</strong></p>
+    <!-- KOTAK TANDA TANGAN (MENTOK KANAN) -->
+    <div class="ttd-wrapper">
+        <div class="ttd-box">
+            <p style="margin: 0 0 4px 0;">Garut, {{ $pkb->ditandatangani_pada->translatedFormat('d F Y') }}</p>
+            <p style="margin: 0;">Pemilik Data Pribadi,</p>
+            
+            @if ($pkb->tanda_tangan)
+                <img class="ttd-img" src="{{ storage_path('app/public/' . $pkb->tanda_tangan) }}">
+            @else
+                <div style="height: 65px; margin: 8px 0;"></div>
+            @endif
+            
+            <p style="margin: 0;"><strong>({{ $pkb->nama_konsumen }})</strong></p>
+        </div>
     </div>
-    <div class="clearfix"></div>
+
 </body>
 </html>

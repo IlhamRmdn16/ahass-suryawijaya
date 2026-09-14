@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto" x-data="signaturePad()" x-init="init()">
+<div class="max-w-3xl mx-auto" x-data="signaturePad()">
     <div class="mb-6">
         <h1 class="text-xl font-semibold text-slate-800">Formulir Persetujuan Pemrosesan Data Pribadi</h1>
         <p class="text-sm text-slate-500">Perintah Kerja Bengkel (PKB) &mdash; {{ $antrean->no_polisi }}</p>
@@ -160,25 +160,30 @@
     @endif
 </div>
 
-@script
+@assets
 <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+@endassets
+
+@script
 <script>
     Alpine.data('signaturePad', () => ({
         pad: null,
 
         init() {
-            if (this.$refs.canvas) {
-                // Resize canvas biar tajam di layar retina
-                const canvas = this.$refs.canvas;
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = canvas.offsetHeight * ratio;
-                canvas.getContext('2d').scale(ratio, ratio);
+            this.$nextTick(() => {
+                if (this.$refs.canvas) {
+                    const canvas = this.$refs.canvas;
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = canvas.offsetHeight * ratio;
+                    canvas.getContext('2d').scale(ratio, ratio);
 
-                this.pad = new SignaturePad(canvas, {
-                    backgroundColor: 'rgb(255, 255, 255)',
-                });
-            }
+                    this.pad = new SignaturePad(canvas, {
+                        backgroundColor: 'rgb(255, 255, 255)',
+                    });
+                }
+            });
         },
 
         clear() {
@@ -190,6 +195,7 @@
                 alert('Mohon tanda tangan dulu sebelum menyimpan.');
                 return;
             }
+            
             const dataUrl = this.pad.toDataURL('image/png');
             await $wire.set('tandaTanganBase64', dataUrl);
             await $wire.simpanTandaTangan();
