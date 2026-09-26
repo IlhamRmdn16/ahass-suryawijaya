@@ -169,13 +169,13 @@
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">No Polisi</label>
-                        <input type="text" wire:model="no_polisi" placeholder="Contoh: F 1234 ABC"
+                        <input type="text" wire:model="no_polisi" placeholder="Contoh: Z 1234 ABC"
                             class="w-full rounded-lg border-slate-300 text-sm uppercase focus:ring-slate-800 focus:border-slate-800">
                         @error('no_polisi') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Tipe Motor</label>
-                        <input type="text" wire:model="tipe_motor" placeholder="Contoh: Honda Beat"
+                        <input type="text" wire:model="tipe_motor" placeholder="Contoh: Beat CBS"
                             class="w-full rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
                         @error('tipe_motor') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
