@@ -168,16 +168,17 @@
 <script>
     Alpine.data('signaturePad', () => ({
         pad: null,
+        ratio: 1,
 
         init() {
             this.$nextTick(() => {
                 if (this.$refs.canvas) {
                     const canvas = this.$refs.canvas;
-                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                    
-                    canvas.width = canvas.offsetWidth * ratio;
-                    canvas.height = canvas.offsetHeight * ratio;
-                    canvas.getContext('2d').scale(ratio, ratio);
+                    this.ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+                    canvas.width = canvas.offsetWidth * this.ratio;
+                    canvas.height = canvas.offsetHeight * this.ratio;
+                    canvas.getContext('2d').scale(this.ratio, this.ratio);
 
                     this.pad = new SignaturePad(canvas, {
                         backgroundColor: 'rgb(255, 255, 255)',
@@ -190,13 +191,56 @@
             if (this.pad) this.pad.clear();
         },
 
+        /**
+         * Ambil hanya area yang benar-benar ada coretannya (bounding box
+         * dari titik-titik goresan pena), bukan seluruh canvas kosong.
+         * Jadi ukuran gambar hasil akhir mengikuti besar/kecilnya tanda
+         * tangan asli, bukan dipaksa ke ukuran frame tetap.
+         */
+        cropToSignature() {
+            const strokes = this.pad.toData();
+            const canvas = this.$refs.canvas;
+
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+            strokes.forEach(stroke => {
+                stroke.points.forEach(point => {
+                    if (point.x < minX) minX = point.x;
+                    if (point.x > maxX) maxX = point.x;
+                    if (point.y < minY) minY = point.y;
+                    if (point.y > maxY) maxY = point.y;
+                });
+            });
+
+            const padding = 8;
+            minX = Math.max(0, minX - padding);
+            minY = Math.max(0, minY - padding);
+            maxX = Math.min(canvas.offsetWidth, maxX + padding);
+            maxY = Math.min(canvas.offsetHeight, maxY + padding);
+
+            const width = maxX - minX;
+            const height = maxY - minY;
+
+            const cropped = document.createElement('canvas');
+            cropped.width = width;
+            cropped.height = height;
+
+            cropped.getContext('2d').drawImage(
+                canvas,
+                minX * this.ratio, minY * this.ratio, width * this.ratio, height * this.ratio,
+                0, 0, width, height
+            );
+
+            return cropped.toDataURL('image/png');
+        },
+
         async kirimTandaTangan() {
             if (! this.pad || this.pad.isEmpty()) {
                 alert('Mohon tanda tangan dulu sebelum menyimpan.');
                 return;
             }
-            
-            const dataUrl = this.pad.toDataURL('image/png');
+
+            const dataUrl = this.cropToSignature();
             await $wire.set('tandaTanganBase64', dataUrl);
             await $wire.simpanTandaTangan();
         }

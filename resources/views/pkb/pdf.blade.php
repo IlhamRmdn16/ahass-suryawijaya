@@ -105,15 +105,6 @@
 
         /* =========================================
            NOMOR UTAMA
-           
-           Contoh:
-           
-           1. Memperoleh, mengumpulkan, ...
-              menganalisa, mentransfer, ...
-           
-           2. Memperoleh, mengumpulkan, ...
-              menganalisa, mentransfer, ...
-           
            ========================================= */
 
         table.number-item {
@@ -127,7 +118,6 @@
             vertical-align: top;
         }
 
-        /* Kolom 1. / 2. */
         .number {
             width: 20px;
             padding-right: 3px !important;
@@ -135,7 +125,6 @@
             white-space: nowrap;
         }
 
-        /* Isi nomor 1 / 2 */
         .number-text {
             text-align: justify;
         }
@@ -143,23 +132,11 @@
 
         /* =========================================
            SUB ITEM a. / b.
-           
-           Dibuat lebih menjorok dari 1. / 2.
-           
-           Struktur:
-           
-           [indent] [a.] [isi]
-           
            ========================================= */
 
         table.sub-number-item {
             width: 100%;
             border-collapse: collapse;
-
-            /*
-             * Jarak antara kalimat nomor utama
-             * dengan sub-item a / b.
-             */
             margin: 5px 0 0 0;
         }
 
@@ -168,19 +145,10 @@
             vertical-align: top;
         }
 
-        /*
-         * Kolom kosong untuk membuat
-         * sub-item lebih menjorok.
-         *
-         * Nilainya 20px.
-         */
         .sub-indent {
             width: 20px;
         }
 
-        /*
-         * Kolom a. / b.
-         */
         .sub-number {
             width: 20px;
             padding-right: 3px !important;
@@ -188,9 +156,6 @@
             white-space: nowrap;
         }
 
-        /*
-         * Isi dari a. / b.
-         */
         .sub-number-text {
             text-align: justify;
         }
@@ -239,25 +204,31 @@
 
         /* =========================================
            TANDA TANGAN
+           -- ukuran gambar TIDAK dipaksa (tidak ada height tetap),
+           cuma dibatasi maksimalnya lewat max-width/max-height.
+           Ukuran asli mengikuti hasil crop bounding box coretan,
+           jadi tanda tangan kecil tetap tampil kecil, yang lebar
+           tetap proporsional -- bukan dipaksa stretch ke frame.
            ========================================= */
 
         .ttd-wrapper {
             position: relative;
-            height: 140px;
-            margin-top: 20px;
+            height: 110px;
+            margin-top: 15px;
         }
 
         .ttd-box {
             position: absolute;
             right: 0;
             top: 0;
-            width: 220px;
+            width: 200px;
             text-align: center;
         }
 
         .ttd-img {
-            height: 65px;
-            margin: 8px 0;
+            max-width: 180px;
+            max-height: 70px;
+            margin: 6px 0;
         }
 
     </style>
@@ -354,92 +325,40 @@
 
         <tr>
 
-            <!-- CHECKBOX -->
             <td class="col-checkbox" width="20">
                 <span class="check-box"></span>
             </td>
 
-
-            <!-- KONTEN NOMOR 1 -->
             <td class="col-content">
 
-                <!-- =========================================
-                     NOMOR 1 + ISI
-                     ========================================= -->
-
                 <table class="number-item">
-
                     <tr>
-
-                        <!-- NOMOR 1. -->
-                        <td class="number">
-                            1.
-                        </td>
-
-                        <!-- ISI NOMOR 1 -->
+                        <td class="number">1.</td>
                         <td class="number-text">
                             Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
                             menganalisa, mentransfer dan memusnahkan data pribadi yang diperlukan
                             dari konsumen untuk kegiatan:
                         </td>
-
                     </tr>
-
                 </table>
 
-
-                <!-- =========================================
-                     SUB ITEM a.
-                     ========================================= -->
-
                 <table class="sub-number-item">
-
                     <tr>
-
-                        <!-- INDENT TAMBAHAN -->
-                        <td class="sub-indent">
-                        </td>
-
-
-                        <!-- NOMOR a. -->
-                        <td class="sub-number">
-                            a.
-                        </td>
-
-
-                        <!-- ISI a. -->
+                        <td class="sub-indent"></td>
+                        <td class="sub-number">a.</td>
                         <td class="sub-number-text">
                             Proses reminder perawatan berkala kendaraan, perbaikan kendaraan,
                             garansi kendaraan (pabrikan), pemesanan suku cadang, serta berkomunikasi
                             dengan konsumen melalui berbagai media komunikasi dan melakukan kajian
                             umpan balik untuk memahami preferensi dari konsumen;
                         </td>
-
                     </tr>
-
                 </table>
 
-
-                <!-- =========================================
-                     SUB ITEM b.
-                     ========================================= -->
-
                 <table class="sub-number-item">
-
                     <tr>
-
-                        <!-- INDENT TAMBAHAN -->
-                        <td class="sub-indent">
-                        </td>
-
-
-                        <!-- NOMOR b. -->
-                        <td class="sub-number">
-                            b.
-                        </td>
-
-
-                        <!-- ISI b. -->
+                        <td class="sub-indent"></td>
+                        <td class="sub-number">b.</td>
                         <td class="sub-number-text">
                             Menerapkan sistem, prosedur dan perangkat teknis serta mengambil tindakan lain
                             yang diperlukan untuk melindungi data pribadi yang dikumpulkan dan dikelola
@@ -447,9 +366,7 @@
                             informasi dan/atau pihak lainnya yang ditunjuk oleh AHASS dan/atau Distributor
                             dan/atau Manufaktur.
                         </td>
-
                     </tr>
-
                 </table>
 
             </td>
@@ -463,34 +380,21 @@
 
         <tr>
 
-            <!-- CHECKBOX -->
             <td class="col-checkbox" width="20">
                 <span class="check-box"></span>
             </td>
 
-
-            <!-- KONTEN NOMOR 2 -->
             <td class="col-content">
 
                 <table class="number-item">
-
                     <tr>
-
-                        <!-- NOMOR 2. -->
-                        <td class="number">
-                            2.
-                        </td>
-
-
-                        <!-- ISI NOMOR 2 -->
+                        <td class="number">2.</td>
                         <td class="number-text">
                             Memperoleh, mengumpulkan, menyimpan, mengolah, memproses,
                             menganalisa, mentransfer dan memusnahkan data pribadi untuk kegiatan
                             promosi dan/atau informasi yang berkaitan dengan produk dan jasa kendaraan.
                         </td>
-
                     </tr>
-
                 </table>
 
             </td>
@@ -507,7 +411,6 @@
             <td class="col-checkbox" width="20">
             </td>
 
-
             <td class="col-content">
 
                 <p>
@@ -515,7 +418,6 @@
                     maka Saya telah mendapatkan persetujuan dan/atau izin dari subjek data pribadi
                     untuk melakukan pencantuman tersebut.
                 </p>
-
 
                 <p>
                     Perbaikan data pribadi, pengakhiran pemrosesan, penarikan persetujuan,
@@ -526,12 +428,10 @@
                     customercare@astrahonda.com
                 </p>
 
-
                 <p>
                     Formulir ini merupakan satu kesatuan dan tidak terpisahkan dengan lembar PKB/WO
                     yang dikeluarkan secara resmi oleh PT Daya Adicipta Motora.
                 </p>
-
 
                 <p>
                     Demikian Surat Pernyataan ini saya tandatangani dan beri tanda centang
@@ -562,7 +462,6 @@
                 Pemilik Data Pribadi,
             </p>
 
-
             @if ($pkb->tanda_tangan)
 
                 <img
@@ -572,11 +471,10 @@
 
             @else
 
-                <div style="height: 65px; margin: 8px 0;">
+                <div style="height: 70px; margin: 6px 0;">
                 </div>
 
             @endif
-
 
             <p style="margin: 0;">
                 <strong>
