@@ -10,6 +10,25 @@
         </div>
     @endif
 
+    {{-- Form admin isi No. PKB/WO -- SEKARANG DI ATAS, sebelum kartu formulir --}}
+    @if ($pkb && $pkb->status === 'menunggu_no_pkb' && $bisaIsiNoPkb)
+        <div class="mb-6 bg-white border border-slate-200 rounded-xl p-6">
+            <h2 class="text-sm font-semibold text-slate-700 mb-3">Isi No. PKB/WO (Admin)</h2>
+            <div class="flex gap-3">
+                <input type="text" wire:model="no_pkb" placeholder="Contoh: PKB/2026/08/0001"
+                    class="flex-1 rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
+                <button wire:click="simpanNoPkb" class="px-5 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">
+                    Simpan
+                </button>
+            </div>
+            @error('no_pkb') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        </div>
+    @elseif ($pkb && $pkb->status === 'menunggu_no_pkb')
+        <div class="mb-6 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl p-4 text-sm">
+            Formulir sudah ditandatangani konsumen, menunggu admin mengisi No. PKB/WO.
+        </div>
+    @endif
+
     <div class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 text-sm leading-relaxed text-slate-700">
 
         <div class="grid grid-cols-2 gap-4 mb-6 pb-4 border-b border-slate-200">
@@ -30,24 +49,31 @@
             PT Daya Adicipta Motora ("Distributor") untuk :
         </p>
 
-        {{-- Checkbox 1 --}}
+        {{-- Checkbox 1 -- sub item a & b dipisah, menjorok, TIDAK disatukan ke paragraf nomor 1 --}}
         <div class="flex gap-3 mb-4 p-3 rounded-lg {{ $pkb ? 'bg-slate-50' : 'bg-amber-50 border border-amber-200' }}">
             @if (! $pkb)
                 <input type="checkbox" wire:model="setuju_1" class="mt-1 shrink-0 rounded border-slate-300 text-slate-800 focus:ring-slate-800">
             @else
                 <span class="mt-0.5 shrink-0 text-emerald-600">✓</span>
             @endif
-            <p>
-                <strong>1.</strong> Memperoleh, mengumpulkan, menyimpan, mengolah, memproses, menganalisa,
-                mentransfer dan memusnahkan data pribadi yang diperlukan dari konsumen untuk kegiatan:
-                a. Proses reminder perawatan berkala kendaraan, perbaikan kendaraan, garansi kendaraan (pabrikan),
-                pemesanan suku cadang, serta berkomunikasi dengan konsumen melalui berbagai media komunikasi dan
-                melakukan kajian umpan balik untuk memahami preferensi dari konsumen;
-                b. Menerapkan sistem, prosedur dan perangkat teknis serta mengambil tindakan lain yang diperlukan
-                untuk melindungi data pribadi yang dikumpulkan dan dikelola termasuk dengan cara bekerjasama dengan
-                pihak penyedia layanan teknologi dan informasi dan/atau pihak lainnya yang ditunjuk oleh AHASS
-                dan/atau Distributor dan/atau Manufaktur.
-            </p>
+            <div>
+                <p class="mb-2">
+                    <strong>1.</strong> Memperoleh, mengumpulkan, menyimpan, mengolah, memproses, menganalisa,
+                    mentransfer dan memusnahkan data pribadi yang diperlukan dari konsumen untuk kegiatan:
+                </p>
+                <p class="ml-5 mb-2">
+                    <strong>a.</strong> Proses reminder perawatan berkala kendaraan, perbaikan kendaraan, garansi
+                    kendaraan (pabrikan), pemesanan suku cadang, serta berkomunikasi dengan konsumen melalui
+                    berbagai media komunikasi dan melakukan kajian umpan balik untuk memahami preferensi dari
+                    konsumen;
+                </p>
+                <p class="ml-5">
+                    <strong>b.</strong> Menerapkan sistem, prosedur dan perangkat teknis serta mengambil tindakan
+                    lain yang diperlukan untuk melindungi data pribadi yang dikumpulkan dan dikelola termasuk
+                    dengan cara bekerjasama dengan pihak penyedia layanan teknologi dan informasi dan/atau pihak
+                    lainnya yang ditunjuk oleh AHASS dan/atau Distributor dan/atau Manufaktur.
+                </p>
+            </div>
         </div>
         @error('setuju_1') <p class="text-red-500 text-xs mb-3">{{ $message }}</p> @enderror
 
@@ -127,25 +153,6 @@
         </div>
     @endif
 
-    {{-- Form admin isi No. PKB/WO --}}
-    @if ($pkb && $pkb->status === 'menunggu_no_pkb' && $bisaIsiNoPkb)
-        <div class="mt-6 bg-white border border-slate-200 rounded-xl p-6">
-            <h2 class="text-sm font-semibold text-slate-700 mb-3">Isi No. PKB/WO (Admin)</h2>
-            <div class="flex gap-3">
-                <input type="text" wire:model="no_pkb" placeholder="Contoh: PKB/2026/08/0001"
-                    class="flex-1 rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
-                <button wire:click="simpanNoPkb" class="px-5 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">
-                    Simpan
-                </button>
-            </div>
-            @error('no_pkb') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-        </div>
-    @elseif ($pkb && $pkb->status === 'menunggu_no_pkb')
-        <div class="mt-6 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl p-4 text-sm">
-            Formulir sudah ditandatangani konsumen, menunggu admin mengisi No. PKB/WO.
-        </div>
-    @endif
-
     {{-- Tombol download PDF (sudah selesai) --}}
     @if ($pkb && $pkb->status === 'selesai')
         <div class="mt-6 flex justify-end">
@@ -191,12 +198,6 @@
             if (this.pad) this.pad.clear();
         },
 
-        /**
-         * Ambil hanya area yang benar-benar ada coretannya (bounding box
-         * dari titik-titik goresan pena), bukan seluruh canvas kosong.
-         * Jadi ukuran gambar hasil akhir mengikuti besar/kecilnya tanda
-         * tangan asli, bukan dipaksa ke ukuran frame tetap.
-         */
         cropToSignature() {
             const strokes = this.pad.toData();
             const canvas = this.$refs.canvas;
