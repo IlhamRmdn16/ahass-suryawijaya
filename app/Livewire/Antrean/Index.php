@@ -8,11 +8,19 @@ use App\Models\Mekanik;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
+    use WithPagination;
+
+    public const PER_PAGE_OPTIONS = [10, 20, 50, 100];
+
     public string $tanggal;
+
+    // Jumlah baris per halaman, dipilih lewat dropdown di bawah tabel
+    public $perPage = 20;
 
     public ?int $editId = null;
     public string $nama_konsumen = '';
@@ -30,6 +38,17 @@ class Index extends Component
         $this->jam_masuk_waktu = now()->format('H:i');
     }
 
+    // Ganti tanggal / jumlah baris -> balik ke halaman 1
+    public function updatedTanggal(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     protected function rules(): array
     {
         return [
@@ -44,13 +63,33 @@ class Index extends Component
 
     public function render()
     {
-        $antreans = Antrean::with(['mekanik', 'jenisPekerjaan'])
+        $perPage = in_array((int) $this->perPage, self::PER_PAGE_OPTIONS, true)
+            ? (int) $this->perPage
+            : 20;
+
+        $query = Antrean::with(['mekanik', 'jenisPekerjaan'])
             ->tanggal($this->tanggal)
-            ->orderBy('jam_masuk')
-            ->get();
+            ->orderBy('jam_masuk');
+
+        $antreans = $query->paginate($perPage);
+
+        // Kalau halaman yang dibuka sudah tidak ada (misal data terakhir di
+        // halaman itu baru dihapus), mundur ke halaman terakhir yang valid.
+        if ($antreans->currentPage() > $antreans->lastPage()) {
+            $this->setPage($antreans->lastPage());
+            $antreans = $query->paginate($perPage);
+        }
+
+        // Ringkasan status untuk SELURUH data di tanggal ini (bukan cuma halaman aktif)
+        $ringkasan = Antrean::tanggal($this->tanggal)
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
         return view('livewire.antrean.index', [
             'antreans' => $antreans,
+            'ringkasan' => $ringkasan,
+            'perPageOptions' => self::PER_PAGE_OPTIONS,
             'mekanikAktif' => Mekanik::aktif()->orderBy('nama')->get(),
             'jenisPekerjaanAktif' => JenisPekerjaan::aktif()->orderBy('nama_pekerjaan')->get(),
             'bisaAssign' => auth()->user()->can('assign antrean'),
