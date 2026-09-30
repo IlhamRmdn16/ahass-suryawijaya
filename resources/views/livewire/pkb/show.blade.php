@@ -9,16 +9,25 @@
             {{ session('message') }}
         </div>
     @endif
+    @error('tandaTangan')
+        <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+            {{ $message }}
+        </div>
+    @enderror
 
-    {{-- Form admin isi No. PKB/WO -- SEKARANG DI ATAS, sebelum kartu formulir --}}
+    {{-- Form admin isi No. PKB/WO -- di atas, sebelum kartu formulir --}}
     @if ($pkb && $pkb->status === 'menunggu_no_pkb' && $bisaIsiNoPkb)
         <div class="mb-6 bg-white border border-slate-200 rounded-xl p-6">
             <h2 class="text-sm font-semibold text-slate-700 mb-3">Isi No. PKB/WO (Admin)</h2>
             <div class="flex gap-3">
                 <input type="text" wire:model="no_pkb" placeholder="Contoh: PKB/2026/08/0001"
-                    class="flex-1 rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800">
-                <button wire:click="simpanNoPkb" class="px-5 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">
-                    Simpan
+                    wire:loading.attr="disabled" wire:target="simpanNoPkb"
+                    class="flex-1 rounded-lg border-slate-300 text-sm focus:ring-slate-800 focus:border-slate-800 disabled:bg-slate-50">
+                <button wire:click="simpanNoPkb"
+                    wire:loading.attr="disabled" wire:target="simpanNoPkb"
+                    class="px-5 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 disabled:opacity-60 disabled:cursor-wait whitespace-nowrap">
+                    <span wire:loading.remove wire:target="simpanNoPkb">Simpan</span>
+                    <span wire:loading wire:target="simpanNoPkb">Menyimpan...</span>
                 </button>
             </div>
             @error('no_pkb') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -49,7 +58,7 @@
             PT Daya Adicipta Motora ("Distributor") untuk :
         </p>
 
-        {{-- Checkbox 1 -- sub item a & b dipisah, menjorok, TIDAK disatukan ke paragraf nomor 1 --}}
+        {{-- Checkbox 1 --}}
         <div class="flex gap-3 mb-4 p-3 rounded-lg {{ $pkb ? 'bg-slate-50' : 'bg-amber-50 border border-amber-200' }}">
             @if (! $pkb)
                 <input type="checkbox" wire:model="setuju_1" class="mt-1 shrink-0 rounded border-slate-300 text-slate-800 focus:ring-slate-800">
@@ -133,7 +142,9 @@
                     <canvas x-ref="canvas" class="w-full" style="height: 180px; touch-action: none;"></canvas>
                 </div>
                 <div class="flex justify-end gap-2 mb-2">
-                    <button type="button" @click="clear()" class="text-xs text-slate-500 hover:text-slate-800 underline">
+                    <button type="button" @click="clear()"
+                        :disabled="saving"
+                        class="text-xs text-slate-500 hover:text-slate-800 underline disabled:opacity-40 disabled:cursor-not-allowed">
                         Hapus & Ulangi
                     </button>
                 </div>
@@ -147,8 +158,10 @@
     @if (! $pkb)
         <div class="mt-4 flex justify-end">
             <button type="button" @click="kirimTandaTangan()"
-                class="px-6 py-3 rounded-lg bg-slate-900 text-white font-semibold hover:bg-slate-800">
-                Simpan Persetujuan & Tanda Tangan
+                wire:loading.attr="disabled" wire:target="simpanTandaTangan"
+                class="px-6 py-3 rounded-lg bg-slate-900 text-white font-semibold hover:bg-slate-800 disabled:opacity-60 disabled:cursor-wait">
+                <span wire:loading.remove wire:target="simpanTandaTangan">Simpan Persetujuan & Tanda Tangan</span>
+                <span wire:loading wire:target="simpanTandaTangan">Menyimpan...</span>
             </button>
         </div>
     @endif
@@ -165,6 +178,16 @@
             </a>
         </div>
     @endif
+
+    {{-- Indikator proses kecil, sama seperti di halaman Antrean --}}
+    <div wire:loading.flex wire:target="simpanTandaTangan, simpanNoPkb"
+         class="fixed bottom-5 right-5 z-[70] items-center gap-2.5 px-4 py-2.5 rounded-full bg-slate-900 text-white text-xs font-medium shadow-2xl">
+        <svg class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        Memproses...
+    </div>
 </div>
 
 @assets
@@ -176,6 +199,7 @@
     Alpine.data('signaturePad', () => ({
         pad: null,
         ratio: 1,
+        saving: false,
 
         init() {
             this.$nextTick(() => {
@@ -195,7 +219,7 @@
         },
 
         clear() {
-            if (this.pad) this.pad.clear();
+            if (this.pad && ! this.saving) this.pad.clear();
         },
 
         cropToSignature() {
@@ -235,15 +259,27 @@
             return cropped.toDataURL('image/png');
         },
 
+        /**
+         * Perbaikan performa: dulu ini 2 kali bolak-balik ke server
+         * ($wire.set lalu $wire.simpanTandaTangan terpisah). Sekarang
+         * data langsung dikirim sebagai argumen dalam SATU panggilan.
+         */
         async kirimTandaTangan() {
+            if (this.saving) return;
+
             if (! this.pad || this.pad.isEmpty()) {
                 alert('Mohon tanda tangan dulu sebelum menyimpan.');
                 return;
             }
 
+            this.saving = true;
             const dataUrl = this.cropToSignature();
-            await $wire.set('tandaTanganBase64', dataUrl);
-            await $wire.simpanTandaTangan();
+
+            try {
+                await $wire.simpanTandaTangan(dataUrl);
+            } finally {
+                this.saving = false;
+            }
         }
     }));
 </script>

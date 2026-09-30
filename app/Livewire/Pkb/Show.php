@@ -18,9 +18,6 @@ class Show extends Component
     public bool $setuju_1 = false;
     public bool $setuju_2 = false;
 
-    // Diisi lewat JS (signature pad) sebelum simpanTandaTangan() dipanggil
-    public string $tandaTanganBase64 = '';
-
     // Form khusus admin
     public string $no_pkb = '';
 
@@ -35,24 +32,34 @@ class Show extends Component
     }
 
     /**
-     * Konsumen centang persetujuan + tanda tangan di layar (biasanya
-     * tablet/HP yang dipegangkan petugas entry), lalu petugas klik simpan.
+     * Konsumen centang persetujuan + tanda tangan di layar, lalu petugas
+     * klik simpan.
+     *
+     * PENTING (perbaikan performa): $base64Data diterima LANGSUNG sebagai
+     * parameter dari pemanggilan $wire.simpanTandaTangan(dataUrl) di JS --
+     * bukan lagi dikirim dulu lewat $wire.set() di request terpisah baru
+     * dipanggil methodnya. Sebelumnya ini 2 kali bolak-balik ke server
+     * (base64 tanda tangan ikut terkirim 2x), sekarang cuma 1 kali.
      */
-    public function simpanTandaTangan(): void
+    public function simpanTandaTangan(string $base64Data): void
     {
+        $this->setuju_1 = true;
+        $this->setuju_2 = true;
+
         $this->validate([
             'setuju_1' => 'accepted',
             'setuju_2' => 'accepted',
-            'tandaTanganBase64' => 'required|string|min:100', // pastikan bukan canvas kosong
         ], [
             'setuju_1.accepted' => 'Konsumen harus menyetujui poin nomor 1.',
             'setuju_2.accepted' => 'Konsumen harus menyetujui poin nomor 2.',
-            'tandaTanganBase64.required' => 'Tanda tangan belum diisi.',
-            'tandaTanganBase64.min' => 'Tanda tangan belum diisi, coba tanda tangan lagi.',
         ]);
 
-        // Decode base64 PNG dari signature pad, simpan sebagai file
-        $data = explode(',', $this->tandaTanganBase64);
+        if (blank($base64Data) || strlen($base64Data) < 100) {
+            $this->addError('tandaTangan', 'Tanda tangan belum diisi, coba tanda tangan lagi.');
+            return;
+        }
+
+        $data = explode(',', $base64Data);
         $binary = base64_decode(end($data));
         $filename = 'tanda-tangan/pkb-' . $this->antrean->id . '-' . Str::random(8) . '.png';
         Storage::disk('public')->put($filename, $binary);
